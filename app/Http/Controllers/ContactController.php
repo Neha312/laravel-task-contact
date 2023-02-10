@@ -50,8 +50,21 @@ class ContactController extends Controller
     }
     public function Contactedit($id)
     {
-        $contact = Contact::findOrFail($id);
-        return view('contact/edit', ['contact' =>  $contact]);
+        $contact = Contact::where('id', $id)->first();
+        $countries = DB::table('countries')->orderBy('country_name', 'ASC')->get();
+        $data['countries'] = $countries;
+
+        $states = DB::table('states')->where('country_id', $contact->country_id)->orderBy('state_name', 'ASC')->get();
+        $data['states'] = $states;
+
+        $cities = DB::table('cities')->where('state_id', $contact->state_id)->orderBy('city_name', 'ASC')->get();
+        $data['cities'] = $cities;
+
+        if ($contact == null) {
+            return redirect('Showcontact');
+        }
+        $data['contact'] = $contact;
+        return view('contact/edit', $data);
     }
     public function Contactupdate(Request $request, $id)
     {
@@ -60,7 +73,7 @@ class ContactController extends Controller
             'phone_no' => 'required|numeric|min:10',
 
         ]);
-        Contact::findOrFail($id)->update($request->only('contact_name', 'phone_no'));
+        Contact::findOrFail($id)->update($request->only('contact_name', 'phone_no', 'country_id', 'state_id', 'city_id'));
         return redirect('Showcontact')->with('status', 'Updated Succesfully');
     }
     public function Contactdelete($id)

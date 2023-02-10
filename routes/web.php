@@ -29,6 +29,12 @@ Route::group(['middleware' => 'guest'], function () {
     //register route
     Route::get('register', [UserController::class, 'register_view'])->name('register');
     Route::post('register', [UserController::class, 'register'])->name('register');
+
+    Route::get('forget-password', [UserController::class, 'forget']);
+    Route::post('forget-password', [UserController::class, 'forgetPassword'])->name('forgetPassword');
+
+    Route::get('reset-password', [UserController::class, 'reset']);
+    Route::post('reset-password', [UserController::class, 'resetPassword'])->name('resetPassword');
 });
 Route::group(['middleware' => 'auth'], function () {
     Route::get('home', [UserController::class, 'home'])->name('home');

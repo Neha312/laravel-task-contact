@@ -36,7 +36,12 @@ class StateController extends Controller
     }
     public function stateDelete($id)
     {
-        State::destroy($id);
+        $state = State::findOrFail($id);
+        if ($state->cities()->count() > 0) {
+            $state->contacts()->delete();
+            $state->cities()->delete();
+        }
+        $state->delete();
         return redirect('Showstate')->with('status', 'Deleted Succesfully');
     }
 }

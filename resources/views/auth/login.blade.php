@@ -32,12 +32,14 @@
                                     <p class="text-danger">{{ $errors->first('password') }}</p>
                                 @endif
                             </div>
+                            <br>
                             <div class="row">
                                 <div class="col-8 text-left">
-                                    <a href="#" class="btn btn-link"></a>
+                                    <a href="forget-password" class="btn btn-link">Forgot Password</a>
                                 </div>
                                 <div class="col-8 text-right">
                                     <input type="submit" class="btn btn-primary" value="Login" />
+
                                 </div>
                             </div>
                         </form>

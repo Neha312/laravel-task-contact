@@ -35,7 +35,7 @@
             <div class="col-sm-5">
                 <br><br>
                 <table class="table table-hover">
-                    <thead class="table-active">
+                    <thead class="table-light">
                         <tr>
                             <th scope="col">ID</th>
                             <th scope="col">City Name</th>

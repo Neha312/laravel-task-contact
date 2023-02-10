@@ -34,7 +34,19 @@ class CountryController extends Controller
     }
     public function countryDelete($id)
     {
-        Country::destroy($id);
+        $country = Country::findOrFail($id);
+        if ($country->states()->count() > 0) {
+            $country->contacts()->delete();
+            $states = $country->states()->get();
+            if ($states->count() > 0) {
+
+                foreach ($states as $state) {
+                    $state->cities()->delete();
+                    $state->delete();
+                }
+            }
+        }
+        $country->delete();
         return redirect('index')->with('status', 'Deleted Succesfully');
     }
 }

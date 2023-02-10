@@ -10,11 +10,16 @@ class State extends Model
     //hasmany relationship
     public function cities()
     {
-        return $this->hasMany(City::class);
+        return $this->hasMany(City::class, 'state_id');
     }
     //belongs to relationship
     public function country()
     {
         return $this->belongsTo(Country::class);
+    }
+
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class, 'state_id');
     }
 }
