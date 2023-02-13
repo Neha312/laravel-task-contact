@@ -14,13 +14,14 @@
                         aria-expanded="false">More</a>
                     <ul class="dropdown-menu">
                         <li>
-                            <button type="button" class="btn btn-secondary"
-                                style="width: 170px">Welcome,{{ Auth::user()->name }}
+                            <button type="button" class="btn btn-secondary" style="width: 170px">{{ Auth::user()->name }}
                             </button>
                         </li>
                         <li><a class="dropdown-item" href="{{ url('index') }}">Country</a></li>
                         <li><a class="dropdown-item" href="{{ url('Showstate') }}">State</a></li>
                         <li><a class="dropdown-item" href="{{ url('Showcity') }}">City</a></li>
+                        <li><a class="dropdown-item" href="{{ url('list') }}">User</a></li>
+
                         <li>
                             <hr class="dropdown-divider">
                         </li>

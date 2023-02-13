@@ -43,6 +43,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('change-password', [UserController::class, 'changePassword'])->name('change-password');
     Route::post('change-password', [UserController::class, 'updatePassword'])->name('update-password');
 
+    //user route-Yajra Datatable
+    Route::get('list', [UserController::class, 'list'])->name('list');
+    Route::get('createUser', [UserController::class, 'createUser'])->name('createUser');
+    Route::post('addUser', [UserController::class, 'addUser'])->name('addUser');
+    Route::get('editUser/{id}', [UserController::class, 'editUser']);
+    Route::put('updateUser/{id}', [UserController::class, 'updateUser']);
+    Route::get('deleteUser/{id}', [UserController::class, 'deleteUser'])->name('deleteUser');
+
     //Country Controller Route
     Route::controller(CountryController::class)->group(function () {
         Route::get('index',  'index');

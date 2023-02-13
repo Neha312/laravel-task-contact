@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 
 class UserController extends Controller
@@ -75,30 +76,32 @@ class UserController extends Controller
     //Change Password Function
     public function updatePassword(Request $request)
     {
-        // # Validation
+        //Validation
         $request->validate([
             'old_password' => 'required',
             'new_password' => 'required|confirmed',
         ]);
 
 
-        // #Match The Old Password
+        //Match The Old Password
         if (!Hash::check($request->old_password, auth()->user()->password)) {
             return back()->with("error", "Old Password Doesn't match!");
         }
 
 
-        // #Update the new Password
+        //Update the new Password
         User::whereId(auth()->user()->id)->update([
             'password' => Hash::make($request->new_password)
         ]);
 
         return back()->with("status", "Password changed successfully!");
     }
+    //forget password page
     public function forget()
     {
         return view('auth.forget-password');
     }
+    //forget password function
     public function forgetPassword(Request $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -120,6 +123,7 @@ class UserController extends Controller
             return back()->with('error', 'Email Not Exists!');
         }
     }
+    // check token in reset password function
     public function reset(Request $request)
     {
         $pwd = PasswordReset::where('token', $request->token)->first();
@@ -131,6 +135,7 @@ class UserController extends Controller
             return view('404');
         }
     }
+    //reset password function
     public function resetPassword(Request $request)
     {
         $request->validate([
@@ -139,7 +144,68 @@ class UserController extends Controller
         $user = User::findOrFail($request->id);
         $user->password = Hash::make($request->password);
         $user->save();
-        User::where('email', $user->email)->delete();
         return redirect('login');
+    }
+    //user list function
+    public function list(Request $request)
+    {
+        // $users = User::all();
+        if ($request->ajax()) {
+            $data = User::latest()->get();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '<button type="button" name="edit" id="' . $row->id . '" class="edit btn btn-success btn-sm">Edit</button> &nbsp;<button type="button" name="delete" id="' . $row->id . '" class="delete btn btn-danger btn-sm">Delete</button>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('new.user');
+    }
+    //create user view file
+    public function createUser()
+    {
+        return view('new.create');
+    }
+    //create user function
+    public function addUser(Request $request)
+    {
+        //validation
+        $request->validate([
+            'name'      => 'required',
+            'email'     => 'required|email|unique:users',
+            'password'  => 'required|confirmed|min:8'
+        ]);
+        //save in database
+        $user = User::create([
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'password'  => Hash::make($request->password)
+        ]);
+        return redirect('list')->with('success', 'User Register Succesfully');
+    }
+    //edit user function
+    public function editUser($id)
+    {
+        $users = User::findOrFail($id);
+        return view('new/edit', ['users' =>  $users]);
+    }
+    //update user function
+    public function updateUser(Request $request, $id)
+    {
+        $request->validate([
+            'name'      => 'required',
+            'email'     => 'required',
+        ]);
+        User::findOrFail($id)->update($request->only('name', 'email'));
+        return redirect('list')->with('success', 'Updated Succesfully');
+    }
+    //delete user function
+    public function deleteUser($id)
+    {
+        User::destroy($id);
+        return redirect('list')->with('success', 'Deleted Succesfully');
     }
 }
