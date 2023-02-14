@@ -4,8 +4,12 @@
         <div class="row justify-content-between">
             <div class="col-sm-5  align-item-center pt-5">
                 <h1>Add User</h1>
-
-
+                @if (Session::has('error'))
+                    <p class="text-danger">{{ Session::get('error') }}</p>
+                @endif
+                @if (Session::has('success'))
+                    <p class="text-danger">{{ Session::get('success') }}</p>
+                @endif
                 <form action="{{ route('addUser') }}" method="post">
                     @csrf
                     @method('post')
@@ -44,12 +48,7 @@
                         </div>
                     </div>
                 </form>
-                @if (Session::has('error'))
-                    <p class="text-danger">{{ Session::get('error') }}</p>
-                @endif
-                @if (Session::has('success'))
-                    <p class="text-danger">{{ Session::get('success') }}</p>
-                @endif
+
             </div>
         </div>
     </div>

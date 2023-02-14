@@ -21,6 +21,7 @@
                         <li><a class="dropdown-item" href="{{ url('Showstate') }}">State</a></li>
                         <li><a class="dropdown-item" href="{{ url('Showcity') }}">City</a></li>
                         <li><a class="dropdown-item" href="{{ url('list') }}">User</a></li>
+                        <li><a class="dropdown-item" href="{{ url('member-ajax-crud') }}">Member</a></li>
 
                         <li>
                             <hr class="dropdown-divider">

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StateController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CountryController;
 
@@ -50,6 +51,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('editUser/{id}', [UserController::class, 'editUser']);
     Route::put('updateUser/{id}', [UserController::class, 'updateUser']);
     Route::get('deleteUser/{id}', [UserController::class, 'deleteUser'])->name('deleteUser');
+
+    //member route-Ajax practice
+    Route::resource('member-ajax-crud', MemberController::class);
 
     //Country Controller Route
     Route::controller(CountryController::class)->group(function () {
