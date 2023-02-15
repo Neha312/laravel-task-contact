@@ -4,45 +4,62 @@ namespace App\Http\Controllers;
 
 use App\Models\Country;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class CountryController extends Controller
 {
-    //listing of countries
-    public function index()
+    public function index(Request $request)
     {
-        $countries = Country::orderBy('country_name')->simplePaginate(5);
-        return view('country/index', ['countries' => $countries]);
+
+        if ($request->ajax()) {
+            $data = Country::latest()->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="edit btn btn-success btn-sm editCountry">Edit</a>';
+
+                    $btn = $btn . ' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Delete" class="btn btn-danger btn-sm deleteCountry">Delete</a>';
+
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('country.crud');
     }
-    //create user function
-    public function countryCreate(Request $request)
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
-        //validation
-        $request->validate([
-            'country_name' => 'required|alpha',
-        ]);
-        //create country
-        Country::create($request->only('country_name'));
-        return redirect('index')->with('status', 'Inserted Succesfully');
+        Country::updateOrCreate(
+            [
+                'id'        => $request->country_id
+            ],
+            [
+                'country_name' => $request->country_name,
+
+            ]
+        );
+
+        return response()->json(['success' => 'Member saved successfully.']);
     }
-    //edit country function
-    public function countryEdit($id)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
     {
-        $country = Country::findOrFail($id);
-        return view('country/edit', ['country' =>  $country]);
+        $countries = Country::find($id);
+        return response()->json($countries);
     }
-    //update country function
-    public function countryUpdate(Request $request, $id)
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
     {
-        //validation
-        $this->validate($request, ['country_name' => 'required|string']);
-        //update country
-        Country::findOrFail($id)->update($request->only('country_name'));
-        return redirect('index')->with('status', 'Updated Succesfully');
-    }
-    //delete country function
-    public function countryDelete($id)
-    {
-        //delete country with state ,city & contact
         $country = Country::findOrFail($id);
         if ($country->states()->count() > 0) {
             $country->contacts()->delete();
@@ -56,6 +73,6 @@ class CountryController extends Controller
             }
         }
         $country->delete();
-        return redirect('index')->with('status', 'Deleted Succesfully');
+        return response()->json(['success' => 'Member deleted successfully.']);
     }
 }

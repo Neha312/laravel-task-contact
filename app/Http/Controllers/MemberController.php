@@ -10,8 +10,6 @@ class MemberController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
@@ -37,9 +35,6 @@ class MemberController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -57,9 +52,6 @@ class MemberController extends Controller
     }
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
@@ -69,9 +61,6 @@ class MemberController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {

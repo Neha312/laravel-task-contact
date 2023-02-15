@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PasswordReset;
 use App\Mail\ForgotPasswordMail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -17,13 +18,29 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
-    public function index()
+    public function login_view()
     {
         return view('auth.login');
     }
     public function home()
     {
-        return view('home');
+        $result = DB::select("SELECT product_type, COUNT(*) as total_product,product_type FROM products GROUP BY product_type");
+        $chartData = "";
+        foreach ($result as $list) {
+            $chartData .= "['" . $list->product_type . " '," . $list->total_product . " ],";
+        }
+        $grp['chartData'] = rtrim($chartData, ",");
+
+        $result = DB::select("SELECT COUNT(*) as
+        total_product,product_type FROM products GROUP BY product_type");
+        $graphData = "";
+        foreach ($result as $list) {
+            $graphData .= "['" . $list->product_type . " '," . $list->total_product . " ],";
+        }
+        $grp['graphData'] = rtrim($graphData, ",");
+
+        // dd($grp, $arr);
+        return view('home', ['grp' => $grp]);
     }
     //user login function
     public function login(Request $request)
@@ -147,66 +164,60 @@ class UserController extends Controller
         $user->save();
         return redirect('login');
     }
-    //user list function
-    public function list(Request $request)
+    public function index(Request $request)
     {
-        // $users = User::all();
-        if ($request->ajax()) {
-            $data = User::latest()->get();
 
+        if ($request->ajax()) {
+
+            $data = User::latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<button type="button" name="edit" id="' . $row->id . '" class="edit btn btn-success btn-sm">Edit</button> &nbsp;<button type="button" name="delete" id="' . $row->id . '" class="delete btn btn-danger btn-sm">Delete</button>';
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="edit btn btn-success btn-sm editUser">Edit</a>';
+
+                    $btn = $btn . ' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Delete" class="btn btn-danger btn-sm deleteUser">Delete</a>';
+
                     return $btn;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('new.user');
+
+        return view('user.crud');
     }
-    //create user view file
-    public function createUser()
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
-        return view('new.create');
+        User::updateOrCreate(
+            [
+                'id'        => $request->user_id
+            ],
+            [
+                'name' => $request->name,
+                'email' => $request->email,
+            ]
+        );
+
+        return response()->json(['success' => 'Member saved successfully.']);
     }
-    //create user function
-    public function addUser(Request $request)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
     {
-        //validation
-        $request->validate([
-            'name'      => 'required',
-            'email'     => 'required|email|unique:users',
-            'password'  => 'required|confirmed|min:8'
-        ]);
-        //save in database
-        User::create([
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password)
-        ]);
-        return redirect('list')->with('success', 'User Register Succesfully');
+        $user = User::find($id);
+        return response()->json($user);
     }
-    //edit user function
-    public function editUser($id)
-    {
-        $users = User::findOrFail($id);
-        return view('new/edit', ['users' =>  $users]);
-    }
-    //update user function
-    public function updateUser(Request $request, $id)
-    {
-        $request->validate([
-            'name'      => 'required',
-            'email'     => 'required',
-        ]);
-        User::findOrFail($id)->update($request->only('name', 'email'));
-        return redirect('list')->with('success', 'Updated Succesfully');
-    }
-    //delete user function
-    public function deleteUser($id)
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
     {
         User::destroy($id);
-        return redirect('list')->with('success', 'Deleted Succesfully');
+        return response()->json(['success' => 'Member deleted successfully.']);
     }
 }

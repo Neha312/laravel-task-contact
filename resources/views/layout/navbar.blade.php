@@ -17,10 +17,10 @@
                             <button type="button" class="btn btn-secondary" style="width: 170px">{{ Auth::user()->name }}
                             </button>
                         </li>
-                        <li><a class="dropdown-item" href="{{ url('index') }}">Country</a></li>
-                        <li><a class="dropdown-item" href="{{ url('Showstate') }}">State</a></li>
-                        <li><a class="dropdown-item" href="{{ url('Showcity') }}">City</a></li>
-                        <li><a class="dropdown-item" href="{{ url('list') }}">User</a></li>
+                        <li><a class="dropdown-item" href="{{ url('country-crud') }}">Country</a></li>
+                        <li><a class="dropdown-item" href="{{ url('state-crud') }}">State</a></li>
+                        <li><a class="dropdown-item" href="{{ url('city-crud') }}">City</a></li>
+                        <li><a class="dropdown-item" href="{{ url('user-crud') }}">User</a></li>
                         <li><a class="dropdown-item" href="{{ url('member-ajax-crud') }}">Member</a></li>
 
                         <li>

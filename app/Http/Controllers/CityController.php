@@ -3,48 +3,69 @@
 namespace App\Http\Controllers;
 
 use App\Models\City;
+use App\Models\Country;
 use App\Models\State;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class CityController extends Controller
 {
-    //listing of cities
-    public function Showcity()
+    public function index(Request $request)
     {
-        $cities = City::simplepaginate(5);
+
         $states = State::all();
-        return view('city/index', ['cities' => $cities], ['states' => $states]);
+        $countries = Country::all();
+        if ($request->ajax()) {
+            $data = City::latest()->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="edit btn btn-success btn-sm editCity">Edit</a>';
+
+                    $btn = $btn . ' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Delete" class="btn btn-danger btn-sm deleteCity">Delete</a>';
+
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('city.crud', ['states' => $states, ['countries' => $countries]]);
     }
 
-    //create city function
-    public function create(Request $request)
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
-        //validation
-        $request->validate([
-            'city_name' => 'required|alpha',
-        ]);
-        //create city
-        City::create($request->only('city_name', 'state_id'));
-        return redirect('Showcity')->with('status', 'Inserted Succesfully');
+        City::updateOrCreate(
+            [
+                'id'        => $request->city_id
+            ],
+            [
+                'city_name' => $request->city_name,
+                'state_id' => $request->state_id,
+
+            ]
+        );
+
+        return response()->json(['success' => 'Member saved successfully.']);
     }
-    //edit city function
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit($id)
     {
-        $city = City::findOrFail($id);
-        return view('city/edit', ['city' =>  $city]);
+        $cities = City::find($id);
+        return response()->json($cities);
     }
-    //update city function
-    public function update(Request $request, $id)
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
     {
-        //Upddate city
-        City::findOrFail($id)->update($request->only('city_name'));
-        return redirect('Showcity')->with('status', 'Updated Succesfully');
-    }
-    //delete city function
-    public function delete($id)
-    {
-        //delete city
         City::destroy($id);
-        return redirect('Showcity')->with('status', 'Deleted Succesfully');
+        return response()->json(['success' => 'Member deleted successfully.']);
     }
 }
