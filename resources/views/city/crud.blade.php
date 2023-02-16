@@ -12,7 +12,7 @@
                     <th>No</th>
                     <th>City Name</th>
                     <th>State Name</th>
-                    {{-- <th>Country Name</th> --}}
+                    <th>Country Name</th>
                     <th width="280px">Action</th>
                 </tr>
             </thead>
@@ -89,21 +89,21 @@
                 serverSide: true,
                 ajax: "{{ route('city-crud.index') }}",
                 columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
+                        data: 'id',
+                        name: 'id'
                     },
                     {
                         data: 'city_name',
                         name: 'city_name'
                     },
                     {
-                        data: 'state_id',
-                        name: 'state_id'
+                        data: 'state',
+                        name: 'state.state_name'
                     },
-                    // {
-                    //     data: 'state_id',
-                    //     name: 'state_id'
-                    // },
+                    {
+                        data: 'country',
+                        name: 'country.country_name'
+                    },
                     {
                         data: 'action',
                         name: 'action',

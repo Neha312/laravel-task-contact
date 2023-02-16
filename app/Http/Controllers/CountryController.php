@@ -8,6 +8,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CountryController extends Controller
 {
+    //listing of countries
     public function index(Request $request)
     {
 

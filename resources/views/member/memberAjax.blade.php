@@ -6,18 +6,43 @@
         <ul class="nav nav-pills nav-pills-bg-soft justify-content-sm-end mb-4 ">
             <a class="btn btn-success" href="javascript:void(0)" id="createNewMember"> Create New Member</a>
         </ul>
-        <table class="table table-bordered data-table">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>FirstName</th>
-                    <th>LastName</th>
-                    <th width="280px">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <form action=" {{ url('report') }}" method="GET">
+            <div class="form-group-row">
+                <label for="date" class="col-form-label-sm-2">From</label>
+                <input type="date" name="fromdate" id="fromdate" required>
+            </div>
+            <div class="form-group-row">
+                <label for="date" class="col-form-label-sm-2 ml-4">To</label>
+                <input type="date" name="todate" id="todate" required>
+            </div>
+            <div class="form-group-row">
+                <label for="date" class="col-form-label-sm-2">First Name</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control input-sm" name="firstname" id="firstname"
+                        placeholder="Search other">
+                </div>
+                <div class="col-sm-2">
+                    <button type="submit" class="btn" name="search" title="Search">Search</button>
+                </div>
+
+        </form>
+    </div>
+    <table class="table table-bordered data-table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th width="280px">Action</th>
+                <th width="50px"><button type="button" name="bulk_delete" id="bulk_delete"
+                        class="btn btn-danger btn-xs">Delete</button></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
     </div>
     <div class="modal fade" id="ajaxModel" aria-hidden="true">
         <div class="modal-dialog">
@@ -99,9 +124,23 @@
                         name: 'lastname'
                     },
                     {
+                        data: 'created_at',
+                        name: 'created_at'
+                    },
+                    {
+                        data: 'updated_at',
+                        name: 'updated_at'
+                    },
+                    {
                         data: 'action',
                         name: 'action',
                         orderable: true,
+                        searchable: false
+                    },
+                    {
+                        data: 'checkbox',
+                        name: 'checkbox',
+                        orderable: false,
                         searchable: false
                     },
                 ]
@@ -228,12 +267,36 @@
                             console.log('Error:', data);
                         }
                     });
-
                 }
-
-
             });
-
+            $(document).on('click', '#bulk_delete', function() {
+                var member_id = [];
+                if (confirm("Are you sure you want to Delete this data?")) {
+                    $('.users_checkbox:checked').each(function() {
+                        member_id.push($(this).val());
+                    });
+                    if (member_id.length > 0) {
+                        $.ajax({
+                            url: "{{ route('removeall') }}",
+                            method: "get",
+                            data: {
+                                id: member_id
+                            },
+                            success: function(data) {
+                                console.log(data);
+                                alert(data);
+                                window.location.assign("member-ajax-crud");
+                            },
+                            error: function(data) {
+                                var errors = data.responseJSON;
+                                console.log(errors);
+                            }
+                        });
+                    } else {
+                        alert("Please select atleast one checkbox");
+                    }
+                }
+            });
         });
     </script>
 @endsection

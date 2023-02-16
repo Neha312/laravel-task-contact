@@ -8,6 +8,7 @@ use App\Models\Contact;
 use App\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class ContactController extends Controller
 {
@@ -16,9 +17,9 @@ class ContactController extends Controller
     {
         //get countries  name
         $data['countries'] = Country::get(["country_name", "id"]);
-        return view('dropdown', $data);
+        return view('contact.index', $data);
     }
-    //fetch states
+    // //fetch states
     public function fetchState(Request $request)
     {
         //get states name

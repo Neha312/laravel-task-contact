@@ -18,6 +18,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
+
     public function login_view()
     {
         return view('auth.login');

@@ -88,16 +88,16 @@
                 serverSide: true,
                 ajax: "{{ route('state-crud.index') }}",
                 columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
+                        data: 'id',
+                        name: 'id'
                     },
                     {
                         data: 'state_name',
                         name: 'state_name'
                     },
                     {
-                        data: 'country_id',
-                        name: 'country_id'
+                        data: 'country',
+                        name: 'country.country_name'
                     },
                     {
                         data: 'action',

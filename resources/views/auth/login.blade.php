@@ -1,8 +1,7 @@
 @extends('layout.app')
 @section('content')
-    <div class="container">
+    <div class="container mt-4">
         <div class="row">
-
             <div class="col-md-4 offset-md-4">
                 <div class="card form-holder">
                     <div class="card-body">
@@ -34,12 +33,11 @@
                             </div>
                             <br>
                             <div class="row">
-                                <div class="col-8 text-left">
-                                    <a href="forget-password" class="btn btn-link">Forgot Password</a>
-                                </div>
-                                <div class="col-8 text-right">
+                                <div class="col-4 text-left ml-2">
                                     <input type="submit" class="btn btn-primary" value="Login" />
-
+                                </div>
+                                <div class="col-8 text-right ">
+                                    <a href="forget-password" class="btn btn-link">Forgot Password</a>
                                 </div>
                             </div>
                         </form>

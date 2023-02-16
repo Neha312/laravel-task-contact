@@ -9,14 +9,16 @@ use Yajra\DataTables\Facades\DataTables;
 
 class StateController extends Controller
 {
-
+    //listing of states
     public function index(Request $request)
     {
         $countries = Country::all();
         if ($request->ajax()) {
-            $data = State::latest()->get();
-            return DataTables::of($data)
-                ->addIndexColumn()
+            $data = State::with('country');
+            return DataTables::eloquent($data)
+                ->addColumn('country', function (State $state) {
+                    return $state->country->country_name;
+                })
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="edit btn btn-success btn-sm editState">Edit</a>';
 
@@ -25,9 +27,8 @@ class StateController extends Controller
                     return $btn;
                 })
                 ->rawColumns(['action'])
-                ->make(true);
+                ->toJson();
         }
-
         return view('state.crud', ['countries' => $countries]);
     }
 

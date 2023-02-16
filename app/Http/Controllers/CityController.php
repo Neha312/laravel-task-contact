@@ -10,15 +10,24 @@ use Yajra\DataTables\Facades\DataTables;
 
 class CityController extends Controller
 {
+    //listing of cities
     public function index(Request $request)
     {
 
         $states = State::all();
         $countries = Country::all();
         if ($request->ajax()) {
-            $data = City::latest()->get();
+            $data = City::with('state')
+                ->with('country');
+            // $data = City::latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
+                ->addColumn('state', function ($data) {
+                    return $data->state->state_name;
+                })
+                ->addColumn('country', function ($data) {
+                    return $data->state->country->country_name;
+                })
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Edit" class="edit btn btn-success btn-sm editCity">Edit</a>';
 
@@ -45,7 +54,6 @@ class CityController extends Controller
             [
                 'city_name' => $request->city_name,
                 'state_id' => $request->state_id,
-
             ]
         );
 

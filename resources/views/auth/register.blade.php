@@ -1,8 +1,7 @@
 @extends('layout.app')
 @section('content')
-    <div class="container">
+    <div class="container mt-3">
         <div class="row">
-
             <div class="col-md-4 offset-md-4">
                 <div class="card form-holder">
                     <div class="card-body">

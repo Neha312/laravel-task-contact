@@ -68,7 +68,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('fetch-states', 'fetchState');
         Route::post('fetch-cities', 'fetchCity');
     });
+    // Route::resource('contact-crud', ContactController::class);
+    // Route::post('fetch-states', [ContactController::class, 'fetchState']);
+    // Route::post('fetch-cities', [ContactController::class, 'fetchCity']);
+
 
     //member route-Ajax practice
     Route::resource('member-ajax-crud', MemberController::class);
+    Route::get('removeall', [MemberController::class, 'removeall'])->name('removeall');
+    Route::get('records', [MemberController::class, 'records'])->name('records');
+    Route::get('report', [MemberController::class, 'report'])->name('report');
 });

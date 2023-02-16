@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 
 class MemberController extends Controller
@@ -26,7 +29,8 @@ class MemberController extends Controller
 
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->addColumn('checkbox', '<input type="checkbox" name="users_checkbox[]" class="users_checkbox" value="{{$id}}" />')
+                ->rawColumns(['action', 'checkbox'])
                 ->make(true);
         }
 
@@ -66,5 +70,52 @@ class MemberController extends Controller
     {
         Member::find($id)->delete();
         return response()->json(['success' => 'Member deleted successfully.']);
+    }
+    public function removeall(Request $request)
+    {
+        $member_id_array = $request->input('id');
+        $member = Member::whereIn('id', $member_id_array);
+        if ($member->delete()) {
+            echo 'Data Deleted';
+        }
+    }
+    public function records(Request $request)
+    {
+        if ($request->ajax()) {
+
+            if ($request->input('start_date') && $request->input('end_date')) {
+
+                $start_date = Carbon::parse($request->input('start_date'));
+                $end_date = Carbon::parse($request->input('end_date'));
+
+                if ($end_date->greaterThan($start_date)) {
+                    $students = Member::whereBetween('created_at', [$start_date, $end_date])->get();
+                } else {
+                    $students = Member::latest()->get();
+                }
+            } else {
+                $students = Member::latest()->get();
+            }
+
+            return response()->json([
+                'students' => $students
+            ]);
+        } else {
+            abort(403);
+        }
+    }
+    public function report(Request $request)
+    {
+        dd($request->all());
+        // if (Auth::guest()) {
+        //     return redirect()->route('/');
+        // }
+        $fromdate = $request->fromdate;
+        // dd($fromdate);
+        $todate = $request->todate;
+        // $firstname = $request->firstname;
+
+        $data = DB::select("SELECT * FROM `members` WHERE created_at BETWEEN '$fromdate 00:00:00' AND '$todate 00:00:00'");
+        return view('member.memberAjax', compact('data'));
     }
 }
